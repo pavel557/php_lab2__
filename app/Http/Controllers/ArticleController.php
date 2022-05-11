@@ -21,7 +21,10 @@ class ArticleController extends Controller
         }
         if ($request->has('tag_name') && !empty($request->get('tag_name'))) 
         {
-            $articles = $articles->wherePivot($request->has('tag_name'), 1);
+            $tagName = $request->get('tag_name');
+            $articles = $articles->whereHas('tags', function ($query) use ($tagName) {
+                $query->where('name', 'like', '%' . $tagName . '%');
+            });
         }
 
         return view('posts', [
